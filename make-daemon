@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# TODO print out working configuration file
+
+COMMAND="make"
+
+# TODO loop on file modification
 for RULE in "$@"
 do
-  echo "make" $RULE
-  make $RULE
+  # TODO color code labels
+  echo $COMMAND $RULE:
+  $COMMAND $RULE
 done
