@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# TODO print out working configuration file
+echo "Using makefile(s): $(make -p --recon | grep MAKEFILE_LIST | cut -d" " -f4-)"
+make -p --recon >/dev/null
+echo [ $? == 2 ]
 
 # Colors
 source $(dirname $BASH_SOURCE)/colors.sh
