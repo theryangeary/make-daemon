@@ -28,6 +28,6 @@ do
     # Success
     echo -e ${COMMAND_COLOR}${COMMAND} ${RULE}${NO_COLOR}: done
   fi
-  # (there could still be warnings, etc., so print even if succeeded)
+  # there could still be warnings, etc., so print even if succeeded
   echo ${OUTPUT}
 done
