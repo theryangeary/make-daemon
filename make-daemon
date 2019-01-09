@@ -19,7 +19,6 @@ for RULE in "$@"
 do
   # Run the command and save the output for later pretty-printing
   OUTPUT=$($COMMAND $RULE 2>&1 >/dev/null)
-  #TODO respect newlines in OUTPUT
   # if $? is 0 make succeeded
   if [ $? != 0 ]; then
     # Failure
@@ -30,6 +29,6 @@ do
   fi
   # there could still be warnings, etc., so print even if succeeded
   if [ ${#OUTPUT} -ne 0 ]; then
-    echo ${OUTPUT}
+    echo "${OUTPUT}"
   fi
 done
