@@ -10,25 +10,33 @@ echo "Using makefile(s): $(make -p --recon | grep MAKEFILE_LIST | cut -d" " -f4-
 # Colors
 source $(dirname $BASH_SOURCE)/colors.sh
 COMMAND_COLOR="$COLOR_PREFIX$LIGHTPURPLE$COLOR_POSTFIX"
+INOTIFY_COLOR="$COLOR_PREFIX$GREEN$COLOR_POSTFIX"
 ERROR_COLOR="$COLOR_PREFIX$LIGHTRED$COLOR_POSTFIX"
 NO_COLOR="${COLOR_PREFIX}0${COLOR_POSTFIX}"
 
 # TODO loop on file modification
 # for now, all args are assumed to be make rules
-for RULE in "$@"
+while
+  for RULE in "$@"
+  do
+    # Run the command and save the output for later pretty-printing
+    OUTPUT=$($COMMAND $RULE 2>&1 >/dev/null)
+    # if $? is 0 make succeeded
+    if [ $? != 0 ]; then
+      # Failure
+      echo -e ${ERROR_COLOR}${COMMAND} ${RULE}${NO_COLOR}:
+    else
+      # Success
+      echo -e ${COMMAND_COLOR}${COMMAND} ${RULE}${NO_COLOR}: done
+    fi
+    # there could still be warnings, etc., so print even if succeeded
+    if [ ${#OUTPUT} -ne 0 ]; then
+      echo "${OUTPUT}"
+    fi
+  done
+  printf $INOTIFY_COLOR
+  inotifywait -qr --exclude .git -e create -e modify -e delete . --format "%e %w%f"
+  printf $NO_COLOR
 do
-  # Run the command and save the output for later pretty-printing
-  OUTPUT=$($COMMAND $RULE 2>&1 >/dev/null)
-  # if $? is 0 make succeeded
-  if [ $? != 0 ]; then
-    # Failure
-    echo -e ${ERROR_COLOR}${COMMAND} ${RULE}${NO_COLOR}:
-  else
-    # Success
-    echo -e ${COMMAND_COLOR}${COMMAND} ${RULE}${NO_COLOR}: done
-  fi
-  # there could still be warnings, etc., so print even if succeeded
-  if [ ${#OUTPUT} -ne 0 ]; then
-    echo "${OUTPUT}"
-  fi
+  :
 done
